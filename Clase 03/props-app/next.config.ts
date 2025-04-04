@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    domains: ['rickandmortyapi.com'], // ✅ Añade este dominio
+  },
 };
 
 export default nextConfig;
