@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface CharacterProps {
-    params: {
+    params: Promise<{
         idCharacter: string;
-    };
+    }>;
 }
 interface CharacterData {
     id: number;
@@ -15,14 +16,16 @@ interface CharacterData {
 }
 
 export default function Character( { params }: CharacterProps ) {
+    const { idCharacter } = use( params ); // <-- usa `use(params)`
+    const initialId = parseInt( idCharacter, 10 );
+    const [characterId, setCharacterId] = useState<number>( initialId );
     const [character, setCharacter] = useState<CharacterData | null>( null );
     const [error, setError] = useState<string | null>( null );
 
     useEffect( () => {
         async function fetchCharacter() {
-            const { idCharacter } = await params;
             try {
-                const res = await fetch( `https://rickandmortyapi.com/api/character/${idCharacter}` );
+                const res = await fetch( `https://rickandmortyapi.com/api/character/${characterId}` );
 
                 if ( !res.ok ) {
                     throw new Error( `Error al obtener el personaje.Código: ${res.status}` );
@@ -37,13 +40,16 @@ export default function Character( { params }: CharacterProps ) {
         }
 
         fetchCharacter();
-    }, [params] );
+    }, [characterId] );
 
     if ( error ) {
         return (
             <>
                 <h1>Error</h1>
                 <p>{error}</p>
+                <Link href={`/characters/`}>
+                    Go to characters
+                </Link>
             </>
         );
     }
@@ -55,6 +61,15 @@ export default function Character( { params }: CharacterProps ) {
             </>
         );
     }
+    const handleNext = () => {
+        setCharacterId( ( prevId ) => prevId + 1 );
+    };
+
+    const handlePrev = () => {
+        if ( characterId > 1 ) {
+            setCharacterId( ( prevId ) => prevId - 1 );
+        }
+    };
 
     return (
         <>
@@ -69,6 +84,13 @@ export default function Character( { params }: CharacterProps ) {
                 priority
                 style={{ objectFit: "cover" }}
             />
+            <button onClick={handlePrev} disabled={characterId === 1}>
+                Anterior
+            </button>
+            <button onClick={handleNext}>
+                Siguiente
+            </button>
+
         </>
     );
 }

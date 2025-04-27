@@ -1,6 +1,9 @@
+
 import Link from "next/link";
 
 export default async function Characters() {
+
+
     const data = await fetch( 'https://rickandmortyapi.com/api/character' )
     const posts = await data.json();
     const results = posts.results;
