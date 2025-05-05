@@ -1,23 +1,26 @@
-import getData from "@/API/getData"
-
+import getData from "@/API/getData";
+import Link from "next/link";
 export default async function Characters() {
-    const characters = await getData();
+    const allData = await getData();
     return (
         <>
-            <h1>Characters</h1>
+            <div>Show all characters</div>
             <ul>
                 {
-                    characters.map( ( result: { id: string, name: string } ) => (
+                    allData.map( ( data: { id: number, name: string, species: string } ) => (
+                        <li key={data.id}>
+                            <Link href={`/characters/${data.id}`}>
+                                <div className="flex">
+                                    <p className="px-3" >-{data.name}</p>
+                                    <p>- {data.species}</p>
+                                </div>
+                            </Link>
 
-                        <li key={result.id}>
-
-                            <p>{result.name}</p>
                         </li>
 
                     ) )
                 }
             </ul>
-
         </>
     )
 }
